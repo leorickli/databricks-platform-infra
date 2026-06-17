@@ -1,5 +1,5 @@
 resource "aws_security_group" "databricks_sg" {
-  name        = "dpx-databricks-sg"
+  name        = "lmx-databricks-sg"
   vpc_id      = var.aws_vpc_id
   description = "Security group for Databricks clusters - controls network access"
 
@@ -122,7 +122,7 @@ resource "aws_security_group" "databricks_sg" {
   }
 
   tags = {
-    Name = "dpx-databricks-sg"
+    Name = "lmx-databricks-sg"
   }
 }
 
@@ -140,7 +140,7 @@ module "vpc_endpoints" {
       # development only as it already contains one subnet for each AZ
       subnet_ids = var.aws_private_subnets_development
       tags = {
-        Name = "dpx-sts-vpc-endpoint"
+        Name = "lmx-sts-vpc-endpoint"
       }
     },
     kinesis-streams = {
@@ -149,12 +149,12 @@ module "vpc_endpoints" {
       # development only as it already contains one subnet for each AZ
       subnet_ids = var.aws_private_subnets_development
       tags = {
-        Name = "dpx-kinesis-vpc-endpoint"
+        Name = "lmx-kinesis-vpc-endpoint"
       }
     },
   }
 
   tags = {
-    Name = "dpx-databricks-endpoints"
+    Name = "lmx-databricks-endpoints"
   }
 }

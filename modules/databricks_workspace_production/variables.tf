@@ -43,11 +43,6 @@ variable "databricks_user_developer" {
   description = "The email of user Developer Example"
 }
 
-variable "databricks_dbt_sp_uuid" {
-  type        = string
-  description = "The UUID of the Databricks service principal for dbt"
-}
-
 variable "databricks_group_developers" {
   type        = string
   description = "The display name of the developers group"

@@ -48,12 +48,3 @@ resource "databricks_cluster" "developer" {
 
   depends_on = [databricks_instance_profile.data_access]
 }
-
-resource "databricks_sql_endpoint" "dbt_warehouse" {
-  name                      = "dbt Staging Warehouse"
-  cluster_size              = "2X-Small"
-  min_num_clusters          = 1
-  max_num_clusters          = 2
-  auto_stop_mins            = 1
-  enable_serverless_compute = true
-}

@@ -10,8 +10,8 @@ data "aws_iam_policy_document" "assume_role_for_ec2" {
   }
 }
 
-data "databricks_service_principal" "dpx_sp" {
-  display_name = "dpx-servicePrincipal"
+data "databricks_service_principal" "lmx_sp" {
+  display_name = "lmx-servicePrincipal"
 }
 
 data "databricks_aws_assume_role_policy" "this" {

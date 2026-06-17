@@ -15,7 +15,7 @@ data "databricks_catalog" "main" {
 # --- Unity Catalog policy documents ---
 # Note: Root bucket IAM policies removed - only needed in development workspace
 
-# - External (dpx-s3-prod) bucket -
+# - External (lmx-s3-prod) bucket -
 # Trust policy document
 data "aws_iam_policy_document" "uc_simple_trust_policy_external_production" {
   statement {
@@ -26,7 +26,7 @@ data "aws_iam_policy_document" "uc_simple_trust_policy_external_production" {
       type = "AWS"
       identifiers = [
         "arn:aws:iam::100000000001:role/unity-catalog-prod-UCMasterRole-14S5ZJVKOTYTL",
-        "arn:aws:iam::${var.aws_account_id}:role/dpx-databricks-uc-external-production",
+        "arn:aws:iam::${var.aws_account_id}:role/lmx-databricks-uc-external-production",
       ]
     }
 
@@ -61,7 +61,7 @@ data "aws_iam_policy_document" "s3_acess_policy_external_production" {
   # Self-Assume Role Permissions (Crucial for Databricks Storage Credentials)
   statement {
     actions   = ["sts:AssumeRole"]
-    resources = ["arn:aws:iam::${var.aws_account_id}:role/dpx-databricks-uc-external-production"]
+    resources = ["arn:aws:iam::${var.aws_account_id}:role/lmx-databricks-uc-external-production"]
     effect    = "Allow"
   }
 }

@@ -31,13 +31,8 @@ resource "databricks_user" "morgan" {
 }
 
 # --- Service Principals ---
-resource "databricks_service_principal" "dpx_dbt_sp" {
-  display_name          = "dpx-dbt-servicePrincipal"
-  databricks_sql_access = true
-}
-
-resource "databricks_service_principal" "dpx_webapp_sp" {
-  display_name          = "dpx-webapp-servicePrincipal"
+resource "databricks_service_principal" "lmx_webapp_sp" {
+  display_name          = "lmx-webapp-servicePrincipal"
   databricks_sql_access = true
 }
 
@@ -124,9 +119,9 @@ resource "databricks_group_member" "teammate_account_admins" {
   member_id = databricks_user.user_teammate.id
 }
 
-resource "databricks_group_member" "dpx_sp_admins" {
+resource "databricks_group_member" "lmx_sp_admins" {
   group_id  = databricks_group.account_admins.id
-  member_id = data.databricks_service_principal.dpx_sp.sp_id
+  member_id = data.databricks_service_principal.lmx_sp.sp_id
 }
 
 resource "databricks_group_member" "alex_developers" {
@@ -180,15 +175,9 @@ resource "databricks_mws_permission_assignment" "user_developer_production" {
   permissions  = ["ADMIN"]
 }
 # - Service Principal Assignments to Workspace -
-resource "databricks_mws_permission_assignment" "sp_dbt_production" {
-  workspace_id = databricks_mws_workspaces.production.workspace_id
-  principal_id = databricks_service_principal.dpx_dbt_sp.id
-  permissions  = ["USER"]
-}
-
 resource "databricks_mws_permission_assignment" "sp_webapp_production" {
   workspace_id = databricks_mws_workspaces.production.workspace_id
-  principal_id = databricks_service_principal.dpx_webapp_sp.id
+  principal_id = databricks_service_principal.lmx_webapp_sp.id
   permissions  = ["USER"]
 }
 
@@ -235,20 +224,11 @@ resource "databricks_mws_permission_assignment" "group_developers_staging" {
   depends_on   = [time_sleep.wait_for_staging_permissions_api]
 }
 
-# dbt SP must be provisioned in the staging workspace before its dbt warehouse
-# permission (module.databricks_workspace_staging) can reference it.
-resource "databricks_mws_permission_assignment" "sp_dbt_staging" {
-  workspace_id = databricks_mws_workspaces.staging.workspace_id
-  principal_id = databricks_service_principal.dpx_dbt_sp.id
-  permissions  = ["USER"]
-  depends_on   = [time_sleep.wait_for_staging_permissions_api]
-}
-
 # webapp SP must be provisioned in the staging workspace before Lakebase can
 # create a Postgres role for it (module.databricks_workspace_staging.lakebase).
 resource "databricks_mws_permission_assignment" "sp_webapp_staging" {
   workspace_id = databricks_mws_workspaces.staging.workspace_id
-  principal_id = databricks_service_principal.dpx_webapp_sp.id
+  principal_id = databricks_service_principal.lmx_webapp_sp.id
   permissions  = ["USER"]
   depends_on   = [time_sleep.wait_for_staging_permissions_api]
 }
@@ -300,7 +280,7 @@ resource "databricks_mws_permission_assignment" "group_ds_data_consumer" {
 
 # --- Roles ---
 resource "aws_iam_role" "cross_account_role" {
-  name               = "dpx-databricks-role-crossaccount"
+  name               = "lmx-databricks-role-crossaccount"
   assume_role_policy = data.databricks_aws_assume_role_policy.this.json
 
   tags = {
@@ -309,14 +289,14 @@ resource "aws_iam_role" "cross_account_role" {
 }
 
 resource "aws_iam_role_policy" "this" {
-  name   = "dpx-databricks-role-policy"
+  name   = "lmx-databricks-role-policy"
   role   = aws_iam_role.cross_account_role.id
   policy = data.databricks_aws_crossaccount_policy.this.json
 }
 
 # Policy to allow the Databricks cross-account role to pass roles
 resource "aws_iam_role_policy" "pass_role_for_data_access" {
-  name = "dpx-databricks-pass-role"
+  name = "lmx-databricks-pass-role"
   role = aws_iam_role.cross_account_role.id
 
   policy = jsonencode({
@@ -337,7 +317,7 @@ resource "aws_iam_role_policy" "pass_role_for_data_access" {
 # --- IAM management for Databricks Clusters ---
 # Creates the primary IAM role for the Databricks cluster EC2 instances
 resource "aws_iam_role" "data_storage_role" {
-  name               = "dpx-databricks-storage-credential-role"
+  name               = "lmx-databricks-storage-credential-role"
   description        = "IAM role for Databricks cluster access to AWS services (S3, Kinesis, etc.)"
   assume_role_policy = data.aws_iam_policy_document.assume_role_for_ec2.json
 
@@ -364,8 +344,6 @@ resource "aws_iam_role" "data_storage_role" {
 #       Resource = [
 #         var.aws_kinesis_acme_bronze_arn,
 #         var.aws_kinesis_acme_silver_arn,
-#         var.aws_kinesis_globex_bronze_arn,
-#         var.aws_kinesis_globex_silver_arn
 #       ]
 #     }]
 #   })
@@ -398,7 +376,7 @@ resource "aws_iam_role_policy" "databricks_assume_kinesis_role" {
     Statement = [{
       Effect   = "Allow",
       Action   = "sts:AssumeRole",
-      Resource = "arn:aws:iam::${var.aws_account_id}:role/dpx-databricks-kinesis-role"
+      Resource = "arn:aws:iam::${var.aws_account_id}:role/lmx-databricks-kinesis-role"
     }]
   })
 }
@@ -429,14 +407,14 @@ resource "aws_s3_bucket_policy" "staging" {
 
 # EC2 Instance Profile for Data Access for the development bucket
 resource "aws_iam_instance_profile" "data_access_instance_profile" {
-  name = "dpx-databricks-data-access-profile"
+  name = "lmx-databricks-data-access-profile"
   role = aws_iam_role.data_storage_role.name
 }
 
 # --- IAM management for Glue jobs
 # Creates a role for Databricks jobs to trigger Glue jobs
 resource "aws_iam_role" "glue_job_role" {
-  name               = "dpx-databricks-glue-trigger-role"
+  name               = "lmx-databricks-glue-trigger-role"
   description        = "IAM role for Databricks to trigger a Glue job"
   assume_role_policy = data.aws_iam_policy_document.assume_role_for_ec2.json
 
@@ -475,6 +453,6 @@ resource "aws_iam_role_policy_attachment" "attach_glue_policy" {
 
 # EC2 Instance Profile so a Databricks job can trigger a Glue job
 resource "aws_iam_instance_profile" "glue_job_instance_profile" {
-  name = "dpx-databricks-glue-job-profile"
+  name = "lmx-databricks-glue-job-profile"
   role = aws_iam_role.glue_job_role.name
 }

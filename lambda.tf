@@ -5,7 +5,7 @@ data "archive_file" "lambda_placeholder_zip" {
 }
 
 resource "aws_lambda_function" "data_decode" {
-  function_name    = "dpx-decode-stream-data"
+  function_name    = "lmx-decode-stream-data"
   role             = aws_iam_role.lambda_processor_role.arn
   filename         = data.archive_file.lambda_placeholder_zip.output_path
   source_code_hash = data.archive_file.lambda_placeholder_zip.output_base64sha256
@@ -17,7 +17,7 @@ resource "aws_lambda_function" "data_decode" {
       LOG_LEVEL = "info"
       # Stream paused 2026-05-18 (see kinesis.tf). Literal kept so the Lambda
       # still deploys; it will fail to PutRecord until the stream is restored.
-      KINESIS_STREAM_NAME = "dpx-kinesis-acme-ingestion"
+      KINESIS_STREAM_NAME = "lmx-kinesis-acme-ingestion"
     }
   }
 }

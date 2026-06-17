@@ -19,21 +19,6 @@ resource "databricks_grants" "external_creds_developer" {
   }
 }
 
-# Grants for SQL Endpoint
-resource "databricks_permissions" "dbt_warehouse" {
-  sql_endpoint_id = databricks_sql_endpoint.dbt_warehouse.id
-
-  access_control {
-    service_principal_name = var.databricks_dbt_sp_uuid
-    permission_level       = "CAN_USE"
-  }
-
-  access_control {
-    service_principal_name = var.databricks_webapp_sp_uuid
-    permission_level       = "CAN_USE"
-  }
-}
-
 # - Grants for the catalogs -
 resource "databricks_grants" "client_catalog_grants" {
   for_each = var.client_names #Inside the unity_catalog.tf file
@@ -46,18 +31,6 @@ resource "databricks_grants" "client_catalog_grants" {
   grant {
     principal  = var.databricks_user_teammate
     privileges = ["USE_CATALOG", "USE_SCHEMA", "SELECT"]
-  }
-  grant {
-    principal = var.databricks_dbt_sp_uuid
-    privileges = [
-      "USE_CATALOG",
-      "USE_SCHEMA",
-      "CREATE_TABLE",
-      "CREATE_SCHEMA",
-      "CREATE_MATERIALIZED_VIEW",
-      "SELECT",
-      "MODIFY",
-    ]
   }
   grant {
     principal = var.databricks_webapp_sp_uuid

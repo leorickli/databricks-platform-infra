@@ -1,6 +1,6 @@
 # --- Buckets ---
 resource "aws_s3_bucket" "general" {
-  bucket = "dpx-s3-general"
+  bucket = "lmx-s3-general"
 
   tags = {
     Name = "s3-bucket-general"
@@ -8,7 +8,7 @@ resource "aws_s3_bucket" "general" {
 }
 
 resource "aws_s3_bucket" "development" {
-  bucket = "dpx-s3-dev"
+  bucket = "lmx-s3-dev"
 
   tags = {
     Name        = "s3-bucket-dev"
@@ -17,7 +17,7 @@ resource "aws_s3_bucket" "development" {
 }
 
 resource "aws_s3_bucket" "production" {
-  bucket = "dpx-s3-prod"
+  bucket = "lmx-s3-prod"
 
   tags = {
     Name        = "s3-bucket-prod"
@@ -26,7 +26,7 @@ resource "aws_s3_bucket" "production" {
 }
 
 resource "aws_s3_bucket" "sandbox" {
-  bucket = "dpx-s3-sandbox"
+  bucket = "lmx-s3-sandbox"
 
   tags = {
     Name        = "s3-bucket-sandbox"
@@ -35,7 +35,7 @@ resource "aws_s3_bucket" "sandbox" {
 }
 
 resource "aws_s3_bucket" "staging" {
-  bucket = "dpx-s3-stg"
+  bucket = "lmx-s3-stg"
 
   tags = {
     Name        = "s3-bucket-stg"
@@ -44,7 +44,7 @@ resource "aws_s3_bucket" "staging" {
 }
 
 resource "aws_s3_bucket" "operational" {
-  bucket = "dpx-s3-operational"
+  bucket = "lmx-s3-operational"
 
   tags = {
     Resource = "Operational"

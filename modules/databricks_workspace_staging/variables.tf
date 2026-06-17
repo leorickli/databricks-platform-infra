@@ -38,11 +38,6 @@ variable "databricks_user_developer" {
   description = "The email of user Developer Example"
 }
 
-variable "databricks_dbt_sp_uuid" {
-  type        = string
-  description = "The UUID of the Databricks service principal for dbt"
-}
-
 variable "databricks_webapp_sp_uuid" {
   type        = string
   description = "The UUID (application_id) of the Databricks service principal for the web app (Lakebase serving access)"

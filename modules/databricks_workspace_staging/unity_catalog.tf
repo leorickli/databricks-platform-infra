@@ -3,7 +3,7 @@
 # the storage-credential / IAM-role external-ID circular dependency) and then
 # adopted into Terraform via `import` blocks (see ../../imports_staging.tf).
 #
-# The backing AWS IAM role (dpx-databricks-uc-external-staging) and its inline
+# The backing AWS IAM role (lmx-databricks-uc-external-staging) and its inline
 # policies remain script-managed — the credential references it by ARN string,
 # exactly as the prod module does, so there is no TF dependency on the role.
 #
@@ -11,16 +11,16 @@
 # metastore). Prod uses ISOLATION_MODE_ISOLATED bound to its workspace; to
 # tighten staging the same way, flip both isolation_mode values and apply.
 resource "databricks_storage_credential" "stg_bucket" {
-  name = "dpx-databricks-storage-credential-external-staging"
+  name = "lmx-databricks-storage-credential-external-staging"
   aws_iam_role {
-    role_arn = "arn:aws:iam::${var.aws_account_id}:role/dpx-databricks-uc-external-staging"
+    role_arn = "arn:aws:iam::${var.aws_account_id}:role/lmx-databricks-uc-external-staging"
   }
   isolation_mode = "ISOLATION_MODE_OPEN"
   comment        = "Managed out-of-band (setup_staging_uc.py); import into TF."
 }
 
 resource "databricks_external_location" "stg_bucket" {
-  name            = "dpx-databricks-external-location-external-staging"
+  name            = "lmx-databricks-external-location-external-staging"
   url             = "s3://${var.aws_staging_bucket}/"
   credential_name = databricks_storage_credential.stg_bucket.name
   isolation_mode  = "ISOLATION_MODE_OPEN"
@@ -32,7 +32,7 @@ resource "databricks_external_location" "stg_bucket" {
 variable "client_names" {
   description = "Set of client names for distinct catalogs"
   type        = set(string)
-  default     = ["dpx", "acme", "globex"]
+  default     = ["lmx", "acme"]
 }
 
 # Static identifier catalogs

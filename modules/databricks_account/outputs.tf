@@ -44,14 +44,8 @@ output "user_developer" {
   sensitive   = true
 }
 
-# For grants on UC, it must be "application_id", "display_name" will not work
-output "dbt_sp_uuid" {
-  value       = databricks_service_principal.dpx_dbt_sp.application_id
-  description = "The UUID of the Databricks service principal for dbt"
-}
-
 output "webapp_sp_uuid" {
-  value       = databricks_service_principal.dpx_webapp_sp.application_id
+  value       = databricks_service_principal.lmx_webapp_sp.application_id
   description = "The UUID (application_id) of the Databricks service principal for the web app"
 }
 

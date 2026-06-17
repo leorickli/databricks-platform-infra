@@ -2,53 +2,53 @@
 # Note: Root bucket storage credential is only needed in development workspace
 # Production workspace uses the shared root external location for metastore access
 
-# - External (dpx-s3-prod) bucket -
+# - External (lmx-s3-prod) bucket -
 # Create the S3 policy
 resource "aws_iam_policy" "s3_policy_external_production" {
-  name        = "dpx-databricks-s3-policy-external-production"
+  name        = "lmx-databricks-s3-policy-external-production"
   description = "Policy for Databricks UC access to S3 prod bucket"
   policy      = data.aws_iam_policy_document.s3_acess_policy_external_production.json
 }
 
 # Create the events policy
 resource "aws_iam_policy" "events_policy_external_production" {
-  name        = "dpx-databricks-events-policy-external-production"
+  name        = "lmx-databricks-events-policy-external-production"
   description = "Policy for Databricks UC access to events"
   policy      = data.aws_iam_policy_document.file_events_policy_external_production.json
 }
 
 # The IAM role for Unity Catalog
 resource "aws_iam_role" "data_access_external_production" {
-  name               = "dpx-databricks-uc-external-production"
+  name               = "lmx-databricks-uc-external-production"
   assume_role_policy = data.aws_iam_policy_document.uc_simple_trust_policy_external_production.json
 }
 
 # Attach the S3 policy to the role
 resource "aws_iam_role_policy_attachment" "s3_attach_external_production" {
-  role       = "dpx-databricks-uc-external-production"
+  role       = "lmx-databricks-uc-external-production"
   policy_arn = aws_iam_policy.s3_policy_external_production.arn
 }
 
 # Attach the events policy to the role
 resource "aws_iam_role_policy_attachment" "events_attach_external_production" {
-  role       = "dpx-databricks-uc-external-production"
+  role       = "lmx-databricks-uc-external-production"
   policy_arn = aws_iam_policy.events_policy_external_production.arn
 }
 
 # It was also necessary to call an API so the storage credential ID gets 
 # inserted in the Metastore. Refer to the documentaiton for more information.
 resource "databricks_storage_credential" "prod_bucket" {
-  name           = "dpx-databricks-storage-credential-external-production"
+  name           = "lmx-databricks-storage-credential-external-production"
   isolation_mode = "ISOLATION_MODE_ISOLATED"
   //cannot reference aws_iam_role directly, as it will create circular dependency
   aws_iam_role {
-    role_arn = "arn:aws:iam::${var.aws_account_id}:role/dpx-databricks-uc-external-production"
+    role_arn = "arn:aws:iam::${var.aws_account_id}:role/lmx-databricks-uc-external-production"
   }
   comment = "Managed by TF"
 }
 
 resource "databricks_external_location" "prod_bucket" {
-  name            = "dpx-databricks-external-location-external-production"
+  name            = "lmx-databricks-external-location-external-production"
   url             = "s3://${var.aws_production_bucket}/"
   credential_name = databricks_storage_credential.prod_bucket.name
   isolation_mode  = "ISOLATION_MODE_ISOLATED"
@@ -60,7 +60,7 @@ resource "databricks_external_location" "prod_bucket" {
 variable "client_names" {
   description = "Set of client names for distinct catalogs"
   type        = set(string)
-  default     = ["dpx", "acme", "globex"]
+  default     = ["lmx", "acme"]
 }
 
 # Static identifier catalogs

@@ -1,6 +1,6 @@
 resource "databricks_mws_networks" "development" {
   account_id         = var.databricks_account_id
-  network_name       = "dpx-databricks-network-development"
+  network_name       = "lmx-databricks-network-development"
   security_group_ids = [aws_security_group.databricks_sg.id]
   subnet_ids         = var.aws_private_subnets_development
   vpc_id             = var.aws_vpc_id
@@ -8,7 +8,7 @@ resource "databricks_mws_networks" "development" {
 
 resource "databricks_mws_networks" "production" {
   account_id         = var.databricks_account_id
-  network_name       = "dpx-databricks-network-production"
+  network_name       = "lmx-databricks-network-production"
   security_group_ids = [aws_security_group.databricks_sg.id]
   subnet_ids         = var.aws_private_subnets_production
   vpc_id             = var.aws_vpc_id
@@ -16,7 +16,7 @@ resource "databricks_mws_networks" "production" {
 
 resource "databricks_mws_networks" "sandbox" {
   account_id         = var.databricks_account_id
-  network_name       = "dpx-databricks-network-sandbox"
+  network_name       = "lmx-databricks-network-sandbox"
   security_group_ids = [aws_security_group.databricks_sg.id]
   subnet_ids         = var.aws_private_subnets_sandbox
   vpc_id             = var.aws_vpc_id
@@ -24,7 +24,7 @@ resource "databricks_mws_networks" "sandbox" {
 
 resource "databricks_mws_networks" "staging" {
   account_id         = var.databricks_account_id
-  network_name       = "dpx-databricks-network-staging"
+  network_name       = "lmx-databricks-network-staging"
   security_group_ids = [aws_security_group.databricks_sg.id]
   subnet_ids         = var.aws_private_subnets_staging
   vpc_id             = var.aws_vpc_id
@@ -33,12 +33,12 @@ resource "databricks_mws_networks" "staging" {
 resource "databricks_mws_storage_configurations" "this" {
   account_id                 = var.databricks_account_id
   bucket_name                = aws_s3_bucket.root_storage_bucket.bucket
-  storage_configuration_name = "dpx-databricks-storage"
+  storage_configuration_name = "lmx-databricks-storage"
 }
 
 resource "databricks_mws_credentials" "this" {
   role_arn         = aws_iam_role.cross_account_role.arn
-  credentials_name = "dpx-databricks-creds"
+  credentials_name = "lmx-databricks-creds"
   depends_on = [
     aws_iam_role_policy.this,
     aws_iam_role_policy.pass_role_for_data_access
@@ -48,7 +48,7 @@ resource "databricks_mws_credentials" "this" {
 resource "databricks_mws_workspaces" "development" {
   account_id     = var.databricks_account_id
   aws_region     = var.aws_region
-  workspace_name = "dpx-development"
+  workspace_name = "lmx-development"
 
   credentials_id           = databricks_mws_credentials.this.credentials_id
   storage_configuration_id = databricks_mws_storage_configurations.this.storage_configuration_id
@@ -62,7 +62,7 @@ resource "databricks_mws_workspaces" "development" {
 resource "databricks_mws_workspaces" "production" {
   account_id     = var.databricks_account_id
   aws_region     = var.aws_region
-  workspace_name = "dpx-production"
+  workspace_name = "lmx-production"
 
   credentials_id           = databricks_mws_credentials.this.credentials_id
   storage_configuration_id = databricks_mws_storage_configurations.this.storage_configuration_id
@@ -76,7 +76,7 @@ resource "databricks_mws_workspaces" "production" {
 resource "databricks_mws_workspaces" "sandbox" {
   account_id     = var.databricks_account_id
   aws_region     = var.aws_region
-  workspace_name = "dpx-sandbox"
+  workspace_name = "lmx-sandbox"
 
   credentials_id           = databricks_mws_credentials.this.credentials_id
   storage_configuration_id = databricks_mws_storage_configurations.this.storage_configuration_id
@@ -90,7 +90,7 @@ resource "databricks_mws_workspaces" "sandbox" {
 resource "databricks_mws_workspaces" "staging" {
   account_id     = var.databricks_account_id
   aws_region     = var.aws_region
-  workspace_name = "dpx-staging"
+  workspace_name = "lmx-staging"
 
   credentials_id           = databricks_mws_credentials.this.credentials_id
   storage_configuration_id = databricks_mws_storage_configurations.this.storage_configuration_id

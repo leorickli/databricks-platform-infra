@@ -106,12 +106,3 @@ resource "databricks_cluster_policy" "developers_policy" {
     }
   })
 }
-
-resource "databricks_sql_endpoint" "dbt_warehouse" {
-  name                      = "dbt Warehouse"
-  cluster_size              = "2X-Small"
-  min_num_clusters          = 1
-  max_num_clusters          = 2
-  auto_stop_mins            = 1
-  enable_serverless_compute = true
-}

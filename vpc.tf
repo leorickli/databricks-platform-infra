@@ -1,12 +1,12 @@
 locals {
-  vpc_name = "dpx-vpc"
+  vpc_name = "lmx-vpc"
   vpc_cidr = "10.16.0.0/16"
   azs      = slice(data.aws_availability_zones.available.names, 0, 2)
 
   public_subnets                         = ["10.16.0.0/24"]
   databricks_private_subnets_development = ["10.16.16.0/24", "10.16.17.0/24"]
   databricks_private_subnets_production  = ["10.16.18.0/24", "10.16.19.0/24"]
-  databricks_private_subnets_sandbox  = ["10.16.20.0/24", "10.16.21.0/24"]
+  databricks_private_subnets_sandbox     = ["10.16.20.0/24", "10.16.21.0/24"]
   databricks_private_subnets_staging     = ["10.16.22.0/24", "10.16.23.0/24"]
   glue_private_subnets                   = ["10.16.32.0/24"]
   ec2_subnets                            = ["10.16.48.0/24"]
@@ -36,7 +36,7 @@ module "vpc" {
   create_igw           = true
 
   tags = {
-    Name = "dpx-vpc"
+    Name = "lmx-vpc"
   }
 }
 
@@ -50,13 +50,13 @@ resource "aws_vpc_endpoint" "s3_gateway_shared" {
   route_table_ids = module.vpc.private_route_table_ids
 
   tags = {
-    Name = "dpx-s3-shared-gateway-endpoint"
+    Name = "lmx-s3-shared-gateway-endpoint"
   }
 }
 
 # --- Security Group for Glue ---
 resource "aws_security_group" "glue_sg" {
-  name        = "dpx-glue-sg"
+  name        = "lmx-glue-sg"
   vpc_id      = module.vpc.vpc_id
   description = "Security group for AWS Glue job - controls network access"
 
@@ -81,6 +81,6 @@ resource "aws_security_group" "glue_sg" {
   }
 
   tags = {
-    Name = "dpx-glue-sg"
+    Name = "lmx-glue-sg"
   }
 }

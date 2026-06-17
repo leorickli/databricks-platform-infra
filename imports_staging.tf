@@ -13,10 +13,10 @@
 
 import {
   to = module.databricks_workspace_staging.databricks_storage_credential.stg_bucket
-  id = "dpx-databricks-storage-credential-external-staging"
+  id = "lmx-databricks-storage-credential-external-staging"
 }
 
 import {
   to = module.databricks_workspace_staging.databricks_external_location.stg_bucket
-  id = "dpx-databricks-external-location-external-staging"
+  id = "lmx-databricks-external-location-external-staging"
 }

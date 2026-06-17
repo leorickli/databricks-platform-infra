@@ -80,20 +80,6 @@ resource "databricks_grants" "main_dev_catalog" {
     privileges = ["ALL_PRIVILEGES"]
   }
 
-  # dbt service principal gets permissions (identical grants in both workspaces prevent cycling)
-  grant {
-    principal = "00000000-0000-0000-0000-000000000000"
-    privileges = [
-      "CREATE_MATERIALIZED_VIEW",
-      "CREATE_SCHEMA",
-      "CREATE_TABLE",
-      "MODIFY",
-      "SELECT",
-      "USE_CATALOG",
-      "USE_SCHEMA",
-    ]
-  }
-
   # ML developers group gets ML-specific permissions
   grant {
     principal = var.databricks_group_ml_developers

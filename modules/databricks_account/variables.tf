@@ -78,18 +78,6 @@ variable "aws_kinesis_acme_silver_arn" {
   default     = null
 }
 
-variable "aws_kinesis_globex_bronze_arn" {
-  description = "The ARN of the Kinesis stream for the GLOBEX bronze layer"
-  type        = string
-  default     = null
-}
-
-variable "aws_kinesis_globex_silver_arn" {
-  description = "The ARN of the Kinesis stream for the GLOBEX silver layer"
-  type        = string
-  default     = null
-}
-
 variable "databricks_account_id" {
   type        = string
   description = "Databricks Account ID"

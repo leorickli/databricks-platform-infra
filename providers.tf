@@ -2,7 +2,7 @@ terraform {
   required_version = ">= 1.11.4"
 
   backend "s3" {
-    bucket       = "dpx-s3-operational"
+    bucket       = "lmx-s3-operational"
     key          = "terraform/dev/terraform.tfstate"
     region       = "eu-central-1" # Variables can't be used here
     encrypt      = true

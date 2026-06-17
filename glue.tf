@@ -6,7 +6,7 @@ locals {
 # Acme Glue job
 resource "aws_glue_job" "acme_ingestion" {
   name              = local.acme_glue_job
-  description       = "Glue job for TRACKSYS data scheduled by Databricks Workflows."
+  description       = "Glue job for batch ingestion scheduled by Databricks Workflows."
   glue_version      = "5.0"
   worker_type       = "G.1X"
   number_of_workers = 2
@@ -27,7 +27,7 @@ resource "aws_glue_job" "acme_ingestion" {
   source_control_details {
     provider      = "GITHUB"
     owner         = "Getdataplatform"
-    repository    = "dataplatformx-data"
+    repository    = "lmx-data"
     branch        = "main"
     folder        = "src/clients/acme/glue"
     auth_strategy = "AWS_SECRETS_MANAGER"

@@ -24,7 +24,7 @@ resource "aws_route53_record" "this" {
 
 # --- API Gateway Core Resources ---
 resource "aws_api_gateway_rest_api" "this" {
-  name        = "dpx-data-ingestion-api"
+  name        = "lmx-data-ingestion-api"
   description = "Receives push notifications (webhooks) from APIs"
 
   endpoint_configuration {

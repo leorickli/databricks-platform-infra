@@ -1,6 +1,6 @@
 # --- Root storage ---
 resource "aws_s3_bucket" "root_storage_bucket" {
-  bucket        = "dpx-databricks-root"
+  bucket        = "lmx-databricks-root"
   force_destroy = true
 
   tags = {

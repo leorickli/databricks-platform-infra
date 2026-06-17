@@ -1,6 +1,6 @@
 # --- Glue ---
 resource "aws_iam_role" "glue_role" {
-  name = "dpx-glue-role"
+  name = "lmx-glue-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -14,7 +14,7 @@ resource "aws_iam_role" "glue_role" {
   })
 
   tags = {
-    Name = "dpx-glue"
+    Name = "lmx-glue"
   }
 }
 
@@ -69,7 +69,7 @@ resource "aws_iam_role_policy" "glue_policy" {
 
 # --- API Gateway --- 
 resource "aws_iam_role" "api_gateway_cloudwatch_logs_role" {
-  name = "dpx-api-gateway-cloudwatch-logs-role"
+  name = "lmx-api-gateway-cloudwatch-logs-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -90,7 +90,7 @@ resource "aws_iam_role_policy_attachment" "api_gateway_cloudwatch_logs_policy_at
 
 # --- Lambda ---
 resource "aws_iam_role" "lambda_processor_role" {
-  name = "dpx-lambda-processor-role"
+  name = "lmx-lambda-processor-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -131,7 +131,7 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 # --- Databricks Kinesis Access ---
 # This is the IAM Role that grants access to the Kinesis stream.
 resource "aws_iam_role" "databricks_kinesis_role" {
-  name = "dpx-databricks-kinesis-role"
+  name = "lmx-databricks-kinesis-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -140,7 +140,7 @@ resource "aws_iam_role" "databricks_kinesis_role" {
         Effect = "Allow",
         Action = "sts:AssumeRole",
         Principal = {
-          AWS = "arn:aws:iam::100000000006:role/dpx-databricks-storage-credential-role"
+          AWS = "arn:aws:iam::100000000006:role/lmx-databricks-storage-credential-role"
         }
       }
     ]
@@ -167,8 +167,6 @@ resource "aws_iam_role" "databricks_kinesis_role" {
 #         aws_kinesis_stream.acme_ingestion.arn,
 #         aws_kinesis_stream.acme_bronze.arn,
 #         aws_kinesis_stream.acme_silver.arn,
-#         aws_kinesis_stream.globex_bronze.arn,
-#         aws_kinesis_stream.globex_silver.arn
 #       ]
 #     }]
 #   })

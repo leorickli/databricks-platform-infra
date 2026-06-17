@@ -1,7 +1,7 @@
 # --- Databricks credentials/secrets ---
 # Stored in AWS Secrets Manager
 data "aws_secretsmanager_secret_version" "databricks_creds" {
-  secret_id = "dpx/terraform"
+  secret_id = "lmx/terraform"
 }
 
 # Parse the JSON secret
@@ -16,10 +16,10 @@ data "aws_region" "current" {}
 
 # --- For API Gateway ---
 data "aws_acm_certificate" "this" {
-  domain   = "api.dataplatformx.com"
+  domain   = "api.lmx.com"
   statuses = ["ISSUED"]
 }
 
 data "aws_route53_zone" "this" {
-  name = "dataplatformx.com"
+  name = "lmx.com"
 }

@@ -15,7 +15,7 @@ data "databricks_catalog" "main" {
 data "databricks_current_user" "terraform_sp" {}
 
 # --- Unity Catalog policy documents ---
-# - Root (dpx-databricks-root) bucket -
+# - Root (lmx-databricks-root) bucket -
 # Trust policy document
 data "aws_iam_policy_document" "uc_simple_trust_policy_root" {
   statement {
@@ -26,7 +26,7 @@ data "aws_iam_policy_document" "uc_simple_trust_policy_root" {
       type = "AWS"
       identifiers = [
         "arn:aws:iam::100000000001:role/unity-catalog-prod-UCMasterRole-14S5ZJVKOTYTL",
-        "arn:aws:iam::${var.aws_account_id}:role/dpx-databricks-uc-root",
+        "arn:aws:iam::${var.aws_account_id}:role/lmx-databricks-uc-root",
       ]
     }
 
@@ -61,7 +61,7 @@ data "aws_iam_policy_document" "s3_acess_policy_root" {
   # Self-Assume Role Permissions (Crucial for Databricks Storage Credentials)
   statement {
     actions   = ["sts:AssumeRole"]
-    resources = ["arn:aws:iam::${var.aws_account_id}:role/dpx-databricks-uc-root"]
+    resources = ["arn:aws:iam::${var.aws_account_id}:role/lmx-databricks-uc-root"]
     effect    = "Allow"
   }
 }
@@ -128,7 +128,7 @@ data "aws_iam_policy_document" "file_events_policy_root" {
   }
 }
 
-# - External (dpx-s3-dev) bucket -
+# - External (lmx-s3-dev) bucket -
 # Trust policy document
 data "aws_iam_policy_document" "uc_simple_trust_policy_external_development" {
   statement {
@@ -139,7 +139,7 @@ data "aws_iam_policy_document" "uc_simple_trust_policy_external_development" {
       type = "AWS"
       identifiers = [
         "arn:aws:iam::100000000001:role/unity-catalog-prod-UCMasterRole-14S5ZJVKOTYTL",
-        "arn:aws:iam::${var.aws_account_id}:role/dpx-databricks-uc-external-development",
+        "arn:aws:iam::${var.aws_account_id}:role/lmx-databricks-uc-external-development",
       ]
     }
 
@@ -174,7 +174,7 @@ data "aws_iam_policy_document" "s3_acess_policy_external_development" {
   # Self-Assume Role Permissions (Crucial for Databricks Storage Credentials)
   statement {
     actions   = ["sts:AssumeRole"]
-    resources = ["arn:aws:iam::${var.aws_account_id}:role/dpx-databricks-uc-external-development"]
+    resources = ["arn:aws:iam::${var.aws_account_id}:role/lmx-databricks-uc-external-development"]
     effect    = "Allow"
   }
 }

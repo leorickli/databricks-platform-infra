@@ -2,12 +2,12 @@
 #
 # Workspace-scoped to PRODUCTION: this module is instantiated with the
 # databricks.workspace_production provider (see root main.tf), so every resource
-# here is created in the dpx-production workspace.
+# here is created in the lmx-production workspace.
 #
 # Purpose: serve metadata.connection_status to the frontend via a Postgres synced
 # table, replacing the ~7s SQL-serverless-warehouse cold start with sub-second
-# reads. The webapp queries Postgres directly as dpx_webapp_sp (OAuth token as the
-# Postgres password). Named generically ("dpx-serving") so it can serve other
+# reads. The webapp queries Postgres directly as lmx_webapp_sp (OAuth token as the
+# Postgres password). Named generically ("lmx-serving") so it can serve other
 # app-facing data (e.g. gold snippets) later, not just connection_status.
 #
 # A synced table is a FOREIGN (POSTGRESQL_FORMAT) table registered into an
@@ -23,13 +23,13 @@
 # branch ("main") and a default READ_WRITE compute endpoint sized per
 # default_endpoint_settings below.
 resource "databricks_postgres_project" "serving" {
-  project_id = "dpx-serving"
+  project_id = "lmx-serving"
 
   spec = {
     pg_version             = 17
-    display_name           = "dpx-serving"
+    display_name           = "lmx-serving"
     enable_pg_native_login = false # OAuth / service-principal auth only
-    default_branch         = "projects/dpx-serving/branches/main"
+    default_branch         = "projects/lmx-serving/branches/main"
 
     default_endpoint_settings = {
       autoscaling_limit_min_cu = 0.5
@@ -43,12 +43,12 @@ locals {
   # The project auto-provisions this default branch + a READ_WRITE "primary" endpoint.
   lakebase_main_branch = "${databricks_postgres_project.serving.name}/branches/main"
 
-  # The production Terraform SP (owns acme_prod/dpx_prod; runs this provider). The
+  # The production Terraform SP (owns acme_prod/lmx_prod; runs this provider). The
   # project auto-created a superuser Postgres role for it (role_id sp-<app id>).
   prod_tf_sp_app_id = "11111111-1111-1111-1111-111111111111"
 }
 
-# Per-client Postgres database inside the project (keeps acme/globex storage isolated;
+# Per-client Postgres database inside the project (keeps per-client storage isolated;
 # both would otherwise map to schema "serving" table "connection_status").
 resource "databricks_postgres_database" "acme" {
   database_id = "acme"
@@ -93,7 +93,7 @@ resource "databricks_grant" "tf_sp_select_connection_status" {
 #      schema exists at replace time.
 #   1. Recreate the synced table (re-snapshots full history with the new schema):
 #        terraform apply -replace='module.databricks_workspace_production.databricks_postgres_synced_table.acme_connection_status'
-#   2. Re-grant SELECT to dpx_webapp_sp (the recreate drops the out-of-band grant).
+#   2. Re-grant SELECT to lmx_webapp_sp (the recreate drops the out-of-band grant).
 #      Connect as a superuser role, then in psql against the `acme` database:
 #        -- (a) find the webapp SP role (the only UUID role that is not the prod TF SP):
 #        SELECT rolname FROM pg_roles
@@ -103,7 +103,7 @@ resource "databricks_grant" "tf_sp_select_connection_status" {
 #        -- (c) verify — expect a row  "<uuid>"=r/databricks_writer_24579 :
 #        \dp serving.connection_status
 #   Connect with:
-#     PGPASSWORD=$(databricks auth token -p dpx-prod | jq -r .access_token) \
+#     PGPASSWORD=$(databricks auth token -p lmx-prod | jq -r .access_token) \
 #       psql "host=<endpoint-host> dbname=acme user=developer@example.com sslmode=require"
 resource "databricks_postgres_synced_table" "acme_connection_status" {
   synced_table_id = "acme_prod.serving.connection_status"
@@ -125,7 +125,7 @@ resource "databricks_postgres_synced_table" "acme_connection_status" {
 }
 
 # --- Frontend access: Postgres role for the webapp service principal ---
-# Lets dpx_webapp_sp authenticate to the Lakebase endpoint via Databricks OAuth
+# Lets lmx_webapp_sp authenticate to the Lakebase endpoint via Databricks OAuth
 # (short-lived token used as the Postgres password). The table-level SELECT on
 # serving.connection_status is a Postgres GRANT (run once via psql, executed as a
 # project superuser) — that in-database grant is not covered by the
@@ -160,7 +160,7 @@ resource "databricks_postgres_role" "developer_admin" {
 # right after a b10/b11 append), so freshness tracks the source instead of a
 # guessed cron. min_time_between_triggers debounces bursts.
 resource "databricks_job" "connection_status_sync" {
-  name = "dpx-serving - acme.connection_status sync refresh"
+  name = "lmx-serving - acme.connection_status sync refresh"
 
   task {
     task_key = "refresh_synced_table"

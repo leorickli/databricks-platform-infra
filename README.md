@@ -8,11 +8,11 @@ The project deploys the following key components:
 
 ### 1. AWS Foundational Infrastructure
 
--   **VPC**: A custom Virtual Private Cloud (`dpx-vpc-dev`) is created with public and private subnets to ensure a secure and isolated network environment. Subnets are specifically allocated for Databricks and AWS Glue.
+-   **VPC**: A custom Virtual Private Cloud (`lmx-vpc-dev`) is created with public and private subnets to ensure a secure and isolated network environment. Subnets are specifically allocated for Databricks and AWS Glue.
 -   **S3 Buckets**:
-    -   `dpx-s3-dev` & `dpx-s3-prod`: For storing development and production data.
-    -   `dpx-glue-operational`: For housing Glue ETL scripts and temporary files.
-    -   `dpx-databricks-root`: The root storage for the Databricks workspace and Unity Catalog metastore.
+    -   `lmx-s3-dev` & `lmx-s3-prod`: For storing development and production data.
+    -   `lmx-glue-operational`: For housing Glue ETL scripts and temporary files.
+    -   `lmx-databricks-root`: The root storage for the Databricks workspace and Unity Catalog metastore.
 -   **VPC Endpoints**: An S3 Gateway Endpoint is established to allow resources in the private subnets (like Glue jobs and Databricks clusters) to access S3 securely and efficiently without traversing the public internet.
 
 ---
@@ -25,8 +25,8 @@ The project deploys the following key components:
 
 ### 3. Real-Time Data Ingestion Pipeline
 
--   **API Gateway**: An HTTP API is set up with a custom domain (`api.dataplatformx.com`). It's configured to receive `POST` requests (webhooks) and requires an API key for authorization.
--   **Kinesis Data Stream**: The API Gateway is directly integrated with a Kinesis stream (`dpx-kinesis-dev`). Incoming data payloads are transformed and sent to the stream, enabling real-time data capture.
+-   **API Gateway**: An HTTP API is set up with a custom domain (`api.lmx.com`). It's configured to receive `POST` requests (webhooks) and requires an API key for authorization.
+-   **Kinesis Data Stream**: The API Gateway is directly integrated with a Kinesis stream (`lmx-kinesis-dev`). Incoming data payloads are transformed and sent to the stream, enabling real-time data capture.
 
 ---
 
@@ -36,12 +36,12 @@ The configuration is split into two modules for clarity and reusability:
 
 -   **`databricks_account` Module**: This module handles the initial setup at the Databricks account level.
     -   Creates the necessary IAM roles for cross-account access between AWS and Databricks.
-    -   Provisions the Databricks workspace (`dpx-develop`).
+    -   Provisions the Databricks workspace (`lmx-develop`).
     -   Sets up the Unity Catalog (UC) Metastore for centralized data governance.
     -   Configures Databricks users and groups.
 
 -   **`databricks_workspace_develop` Module**: This module configures the resources *inside* the Databricks workspace.
-    -   **Unity Catalog**: Creates Storage Credentials and External Locations to securely connect the Unity Catalog to the S3 data lake (`dpx-s3-dev`).
+    -   **Unity Catalog**: Creates Storage Credentials and External Locations to securely connect the Unity Catalog to the S3 data lake (`lmx-s3-dev`).
     -   **3-Level Namespace**: Establishes a `acme_dev` catalog with `bronze`, `silver`, and `gold` schemas to organize data according to a medallion architecture.
     -   **Compute**: Provisions shared and user-specific clusters, as well as a Databricks SQL Warehouse for BI and SQL workloads.
     -   **Permissions**: Manages grants within Unity Catalog, assigning appropriate access levels to users and groups.

@@ -2,10 +2,10 @@
 #
 # Workspace-scoped to STAGING: this module is instantiated with the
 # databricks.workspace_staging provider (see root main.tf), so every resource
-# here is created in the dpx-staging workspace.
+# here is created in the lmx-staging workspace.
 #
 # This mirrors modules/databricks_workspace_production/lakebase.tf one-for-one,
-# swapping prod identifiers for staging (dpx-serving-stg project, acme_stg
+# swapping prod identifiers for staging (lmx-serving-stg project, acme_stg
 # catalog). See that file's header for the full rationale; the only structural
 # differences are the names and that staging gets its own Lakebase project so
 # its Postgres storage never collides with prod's.
@@ -17,13 +17,13 @@
 # branch ("main") and a default READ_WRITE compute endpoint sized per
 # default_endpoint_settings below.
 resource "databricks_postgres_project" "serving" {
-  project_id = "dpx-serving-stg"
+  project_id = "lmx-serving-stg"
 
   spec = {
     pg_version             = 17
-    display_name           = "dpx-serving-stg"
+    display_name           = "lmx-serving-stg"
     enable_pg_native_login = false # OAuth / service-principal auth only
-    default_branch         = "projects/dpx-serving-stg/branches/main"
+    default_branch         = "projects/lmx-serving-stg/branches/main"
 
     default_endpoint_settings = {
       autoscaling_limit_min_cu = 0.5
@@ -37,13 +37,13 @@ locals {
   # The project auto-provisions this default branch + a READ_WRITE "primary" endpoint.
   lakebase_main_branch = "${databricks_postgres_project.serving.name}/branches/main"
 
-  # The Terraform SP that runs every workspace provider (dpx-servicePrincipal;
+  # The Terraform SP that runs every workspace provider (lmx-servicePrincipal;
   # also owns the staging catalogs). The project auto-created a superuser
   # Postgres role for it (role_id sp-<app id>). Same account SP as prod.
   stg_tf_sp_app_id = "11111111-1111-1111-1111-111111111111"
 }
 
-# Per-client Postgres database inside the project (keeps acme/globex storage isolated;
+# Per-client Postgres database inside the project (keeps per-client storage isolated;
 # both would otherwise map to schema "serving" table "connection_status").
 resource "databricks_postgres_database" "acme" {
   database_id = "acme"
@@ -93,7 +93,7 @@ resource "databricks_postgres_synced_table" "acme_connection_status" {
 }
 
 # --- Frontend access: Postgres role for the webapp service principal ---
-# Lets dpx_webapp_sp authenticate to the Lakebase endpoint via Databricks OAuth
+# Lets lmx_webapp_sp authenticate to the Lakebase endpoint via Databricks OAuth
 # (short-lived token used as the Postgres password). The table-level SELECT on
 # serving.connection_status is a Postgres GRANT (run once via psql, executed as a
 # project superuser) — that in-database grant is not covered by the
@@ -128,7 +128,7 @@ resource "databricks_postgres_role" "developer_admin" {
 # right after a b10/b11 append), so freshness tracks the source instead of a
 # guessed cron. min_time_between_triggers debounces bursts.
 resource "databricks_job" "connection_status_sync" {
-  name = "dpx-serving-stg - acme.connection_status sync refresh"
+  name = "lmx-serving-stg - acme.connection_status sync refresh"
 
   task {
     task_key = "refresh_synced_table"

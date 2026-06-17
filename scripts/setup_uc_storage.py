@@ -5,7 +5,7 @@ AWS — breaking the IAM-role / external-ID circular dependency that makes this
 impossible to do in a single `terraform apply`.
 
 Reusable across workspaces AND projects: edit the CONFIG block below and run.
-Nothing here is specific to DPX or staging beyond the values you put in CONFIG.
+Nothing here is specific to LMX or staging beyond the values you put in CONFIG.
 
 What it does (imperative, so there is no circular dependency):
   1. boto3  : create the IAM role (trust = UC master role, placeholder ext-id)
@@ -54,16 +54,16 @@ from databricks.sdk.service.catalog import AwsIamRoleRequest
 CONFIG = {
     # --- auth ---
     "aws_profile": "dataplatform",
-    "databricks_profile": "dpx-prod",  # "" -> fall back to DATABRICKS_HOST/TOKEN env
+    "databricks_profile": "lmx-prod",  # "" -> fall back to DATABRICKS_HOST/TOKEN env
 
     # --- target storage ---
-    "bucket": "dpx-s3-stg",
+    "bucket": "lmx-s3-stg",
     "aws_region": "eu-central-1",
 
     # --- names of the resources to create (must be unique within the metastore) ---
-    "iam_role_name": "dpx-databricks-uc-external-staging",
-    "credential_name": "dpx-databricks-storage-credential-external-staging",
-    "location_name": "dpx-databricks-external-location-external-staging",
+    "iam_role_name": "lmx-databricks-uc-external-staging",
+    "credential_name": "lmx-databricks-storage-credential-external-staging",
+    "location_name": "lmx-databricks-external-location-external-staging",
 
     # --- options ---
     "with_file_events": True,
