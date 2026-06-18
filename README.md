@@ -6,7 +6,7 @@ This repository contains Terraform code to provision an end-to-end data platform
 
 This repo is the **infrastructure layer** of **lmx**; its sibling, [lmx-data](https://github.com/your-account/lmx-data), is the **data layer**.
 
-The boundary is deliberate: **this repo owns *where things live*; `lmx-data` owns *what runs in them*.** Terraform here provisions the foundation — AWS resources, Databricks workspaces, Unity Catalog catalogs/schemas and grants, SQL warehouses, and the Lakebase serving layer. The data layer treats those as a given (it never runs `CREATE SCHEMA`) and deploys connectors, medallion transforms, and serving pipelines with **Databricks Asset Bundles (DABs)** — exposing the gold layer to a frontend app, Databricks Apps, Genie, Lakebase synced tables, and AI/ML workloads.
+The boundary is deliberate: **this repo owns *where things live*; `lmx-data` owns *what runs in them*.** Terraform here provisions the foundation — AWS resources, Databricks workspaces, Unity Catalog catalogs/schemas and grants, SQL warehouses, and the Lakebase serving layer. The data layer treats those as a given and deploys connectors, medallion transforms, and serving pipelines with **Declarative Automation Bundles (DABs)** — exposing a plethora of objects like the silver or gold layer, views, or even Labkebase synced tables to a frontend app, Databricks Apps, Genie, Lakebase synced tables, AI/ML workloads, etc.
 
 Why two repos:
 
