@@ -1,4 +1,5 @@
 # Terraform for AWS & Databricks Data Platform
+<img width="904" height="462" alt="CleanShot 2026-06-18 at 10 16 12" src="https://github.com/user-attachments/assets/7bcd3fad-9fd7-415b-bd90-496b56365798" />
 
 This repository contains Terraform code to provision an end-to-end data platform on AWS, leveraging Databricks for advanced analytics and data processing. The infrastructure is designed to handle both real-time data ingestion and scheduled batch processing.
 
