@@ -15,11 +15,7 @@ locals {
     min(6, length(data.aws_availability_zones.available.names)),
   )
 
-  public_subnets = [
-    "10.16.0.0/24", # AZ a
-    "10.16.1.0/24", # AZ b
-    "10.16.2.0/24", # AZ c
-  ]
+  public_subnets = ["10.16.0.0/24"]
 
   databricks_private_subnets_development = [
     "10.16.16.0/24", # AZ a
@@ -30,7 +26,7 @@ locals {
     "10.16.21.0/24", # AZ f
   ]
 
-  databricks_private_subnets_production = [
+  databricks_private_subnets_staging = [
     "10.16.32.0/24", # AZ a
     "10.16.33.0/24", # AZ b
     "10.16.34.0/24", # AZ c
@@ -39,7 +35,7 @@ locals {
     "10.16.37.0/24", # AZ f
   ]
 
-  databricks_private_subnets_staging = [
+  databricks_private_subnets_production = [
     "10.16.48.0/24", # AZ a
     "10.16.49.0/24", # AZ b
     "10.16.50.0/24", # AZ c
@@ -48,7 +44,7 @@ locals {
     "10.16.53.0/24", # AZ f
   ]
 
-  databricks_private_subnets_sandbox = [
+  databricks_private_subnets_poc = [
     "10.16.64.0/24", # AZ a
     "10.16.65.0/24", # AZ b
     "10.16.66.0/24", # AZ c
@@ -60,7 +56,6 @@ locals {
   glue_private_subnets = [
     "10.16.80.0/24", # AZ a
     "10.16.81.0/24", # AZ b
-    "10.16.82.0/24", # AZ c
   ]
 
   ec2_subnets = ["10.16.96.0/24"]
@@ -68,7 +63,7 @@ locals {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "5.21.0"
+  version = "6.6.1"
 
   name = local.vpc_name
   cidr = local.vpc_cidr
@@ -79,19 +74,17 @@ module "vpc" {
   # index so it aligns to AZ a→f cleanly under the module's round-robin mapping.
   private_subnets = concat(
     local.databricks_private_subnets_development, # indices 0–5
-    local.databricks_private_subnets_production,  # indices 6–11
-    local.databricks_private_subnets_staging,     # indices 12–17
-    local.databricks_private_subnets_sandbox,     # indices 18–23
+    local.databricks_private_subnets_staging,     # indices 6–11
+    local.databricks_private_subnets_production,  # indices 12–17
+    local.databricks_private_subnets_poc,         # indices 18–23
     local.glue_private_subnets,                   # indices 24–26
     local.ec2_subnets,                            # index 27
   )
 
   enable_dns_hostnames = true
   enable_nat_gateway   = true
-  # single NAT keeps cost down for dev/staging; set to false (one NAT per AZ)
-  # for full production HA — no other change required.
-  single_nat_gateway = true
-  create_igw         = true
+  single_nat_gateway   = true
+  create_igw           = true
 
   tags = {
     Name = "lmx-vpc"
